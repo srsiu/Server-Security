@@ -79,7 +79,7 @@ int main(int argc, char const *argv[])
         int status = 0;
         pid_t wpid;
         while((wpid = wait(&status)) > 0); // wait for child to finish
-        printf("child process exited, back to parent");
+        printf("child process exited, back to parent\n");
     }
     
     return 0;
