@@ -7,7 +7,7 @@
 #include <netinet/in.h>
 #include <string.h>
 
-#define PORT 8080
+#define PORT 80
 int main(int argc, char const *argv[])
 {
     int server_fd, new_socket, valread;
@@ -56,9 +56,24 @@ int main(int argc, char const *argv[])
         perror("accept");
         exit(EXIT_FAILURE);
     }
-    valread = read( new_socket , buffer, 1024);
-    printf("%s\n",buffer );
-    send(new_socket , hello , strlen(hello) , 0 );
-    printf("Hello message sent\n");
+
+    if(fork() == 0) {  // child process
+        struct passwd *pd;
+        uid_t uid;
+        if(NULL == (pd = getpwnam("nobody"))){
+            perror("getpwnam() error");
+            exit(EXIT_FAILURE);
+        } else {
+            uid = pd->pw_uid;
+            printf("child id is: %u\n", uid);
+            setuid(uid);
+        }
+
+        valread = read( new_socket , buffer, 1024);
+        printf("%s\n",buffer );
+        send(new_socket , hello , strlen(hello) , 0 );
+        printf("Hello message sent\n");
+    }
+    
     return 0;
 }
