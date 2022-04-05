@@ -57,6 +57,7 @@ int main(int argc, char const *argv[])
         exit(EXIT_FAILURE);
     }
 
+    // separate processes
     if(fork() == 0) {  // child process
         struct passwd *pd;
         uid_t uid;
@@ -73,6 +74,10 @@ int main(int argc, char const *argv[])
         printf("%s\n",buffer );
         send(new_socket , hello , strlen(hello) , 0 );
         printf("Hello message sent\n");
+    } else { // parent process
+        int status = 0;
+        pid_t wpid;
+        while((wpid = wait(&status)) > 0); // wait for child to finish
     }
     
     return 0;
